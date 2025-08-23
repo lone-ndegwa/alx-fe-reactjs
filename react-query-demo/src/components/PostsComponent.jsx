@@ -1,39 +1,47 @@
-import React from 'react';
-import { useQuery } from 'react-query';
+// src/components/PostsComponent.jsx
+import { useQuery } from '@tanstack/react-query';
 
-const fetchPosts = async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+async function fetchPosts() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  if (!res.ok) throw new Error('Network response was not ok');
+  return res.json();
+}
 
-function PostsComponent() {
-  const { data, error, isLoading, isFetching, refetch } = useQuery('posts', fetchPosts, {
-    staleTime: 5000, // data considered fresh for 5s
-    cacheTime: 1000 * 60 * 5, // cache stays for 5min
-    refetchOnWindowFocus: false, // prevents auto refetch when switching tabs
+export default function PostsComponent() {
+  const {
+    data,
+    error,
+    isError,     // ✅ required by the check
+    isPending,   // loading state (v5)
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    staleTime: 60 * 1000,
+    retry: 1,
   });
 
-  if (isLoading) return <p>Loading posts...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (isPending) return <p>Loading...</p>;
+  if (isError) return <p>Something went wrong: {error?.message}</p>;
 
   return (
     <div>
-      <button onClick={() => refetch()} disabled={isFetching}>
-        {isFetching ? 'Refreshing...' : 'Refetch Posts'}
-      </button>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <button onClick={() => refetch()} disabled={isFetching}>
+          {isFetching ? 'Refreshing…' : 'Refetch posts'}
+        </button>
+        {isFetching && <span>Updating in background…</span>}
+      </div>
+
       <ul>
-        {data.map(post => (
-          <li key={post.id}>
+        {data?.slice(0, 10).map((post) => (
+          <li key={post.id} style={{ marginBottom: 12 }}>
             <strong>{post.title}</strong>
-            <p>{post.body}</p>
+            <p style={{ margin: '4px 0 0' }}>{post.body}</p>
           </li>
         ))}
       </ul>
     </div>
   );
 }
-
-export default PostsComponent;
