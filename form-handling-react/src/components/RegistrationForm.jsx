@@ -1,56 +1,46 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 function RegistrationForm() {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = {};
 
-    if (!username || !email || !password) {
-      setError("All fields are required");
-      return;
+    if (!email) {
+      newErrors.email = "Email is required";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
     }
 
-    setError("");
-    // Simulate API request
-    console.log("Submitting form data:", { username, email, password });
-    alert("Registration successful!");
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+    
+      console.log("Form submitted");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+      />
+      {errors.email && <p>{errors.email}</p>}
 
-      <div>
-        <label>Username: </label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label>Email: </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label>Password: </label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+      {errors.password && <p>{errors.password}</p>}
 
       <button type="submit">Register</button>
     </form>
