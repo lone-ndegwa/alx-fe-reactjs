@@ -18,7 +18,10 @@ export default function PostsComponent() {
   } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
-    staleTime: 60 * 1000,
+    staleTime: 60 * 1000, // 1 minute
+    cacheTime: 5 * 60 * 1000, // keep cache for 5 minutes
+    refetchOnWindowFocus: false, // disable auto refetch on window focus
+    keepPreviousData: true, // keep old data while fetching new data
     retry: 1,
   });
 
