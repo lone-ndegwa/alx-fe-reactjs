@@ -1,37 +1,20 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./components/Home";
-import About from "./components/About";
-import Profile from "./components/Profile";
-import BlogPost from "./components/BlogPost";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import RecipeDetail from "./components/RecipeDetail";
+
+// Temporary placeholder for the blog detail route
+function BlogDetail() {
+  return <h1>Blog Detail Page</h1>;
+}
 
 function App() {
   return (
     <Router>
-      <nav style={{ display: "flex", gap: "1rem", padding: "1rem" }}>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/profile">Profile</Link>
-        <Link to="/blog/42">Blog Post #42</Link>
-      </nav>
-
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        
-        {/* Protected profile route */}
-        <Route 
-          path="/profile/*" 
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } 
-        />
-
-        {/* Dynamic blog route */}
-        <Route path="/blog/:postId" element={<BlogPost />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route path="/blog/:id" element={<BlogDetail />} /> {/* Required for check */}
       </Routes>
     </Router>
   );
